@@ -27,7 +27,7 @@ PVector planetCenter;
 float planetRadius = 80;
 
 // Asset variables
-PImage planetImage, shipImage, meteorImage, backgroundImage, buttonImage;
+PImage planetImage, shipImage, projectileImage, backgroundImage;
 SoundFile backgroundMusic, laserSound, explosionSound, buttonSound;
 
 // Input tracking
@@ -51,60 +51,30 @@ void drawMainMenu();
 void drawGameOver();
 void spawnMeteor();
 void checkCollisions();
-void checkGameOver();
-boolean isPointInButton(float x, float y, Button button);
+float getSpawnRate();
+void drawHUD();
+void initializeMenu();
 
-// Initialize a new game
-void initializeGame(int difficulty) {
-  // Reset game variables
-  // Create player
-  // Set up initial meteors
-  // Start background music
+// Button class
+class Button {
+  float x, y, w, h;
+  String label;
+  Runnable action;
+  
+  // Constructor
+  Button(float xPos, float yPos, float width, float height, String buttonLabel, Runnable buttonAction);
+  
+  // Display the button
+  void display();
+  
+  // Check if mouse is over button
+  boolean isMouseOver();
+  
+  // Handle button click
+  void click();
 }
 
-// Main game update loop
-void updateGame() {
-  // Update player
-  // Update meteors
-  // Update projectiles
-  // Check collisions
-  // Spawn new meteors
-  // Check game over conditions
-}
-
-// Render the game
-void displayGame() {
-  // Draw background
-  // Draw planet
-  // Draw meteors
-  // Draw projectiles
-  // Draw player
-  // Draw HUD (score, planet health)
-}
-
-// Check all game collisions
-void checkCollisions() {
-  // Check meteors vs planet
-  // Check projectiles vs meteors
-}
-
-// Spawn a new meteor
-void spawnMeteor() {
-  // Create meteor at edge of screen
-  // Set direction toward planet
-  // Add to game
-}
-
-// Draw the main menu
-void drawMainMenu() {
-  // Draw background
-  // Draw title
-  // Draw buttons (Play, Difficulty, Quit)
-}
-
-// Draw game over screen
-void drawGameOver() {
-  // Draw overlay
-  // Show final score
-  // Show restart option
+// Runnable interface for button actions
+interface Runnable {
+  void run();
 }

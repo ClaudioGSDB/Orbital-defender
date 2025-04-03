@@ -64,14 +64,16 @@ class Player {
     // Create new projectile
     Projectile projectile = new Projectile(
       position.x, position.y,
-      direction.x * 5, direction.y * 5  // Speed of 5 pixels per frame
+      direction.x * 8, direction.y * 8  // Speed of 8 pixels per frame
     );
     
     // Add to game
     projectiles.add(projectile);
     
     // Play sound
-    laserSound.play();
+    //if (laserSound != null) {
+    //  laserSound.play();
+    //}
   }
   
   // Display the player
@@ -87,7 +89,36 @@ class Player {
     imageMode(CENTER);
     image(shipImage, 0, 0);
     
+    // Add thruster effect when moving
+    if (keys[LEFT] || keys['A'] || keys[RIGHT] || keys['D']) {
+      drawThruster();
+    }
+    
     popMatrix();
+  }
+  
+  // Draw thruster effect
+  void drawThruster() {
+    // Draw at back of ship (assuming ship faces upward by default)
+    noStroke();
+    
+    // Main thrust
+    fill(255, 100, 0, 200);
+    beginShape();
+    vertex(0, 15);
+    vertex(-5, 25 + random(5));
+    vertex(0, 30 + random(10));
+    vertex(5, 25 + random(5));
+    endShape(CLOSE);
+    
+    // Inner thrust
+    fill(255, 255, 0, 200);
+    beginShape();
+    vertex(0, 15);
+    vertex(-3, 20 + random(5));
+    vertex(0, 25 + random(5));
+    vertex(3, 20 + random(5));
+    endShape(CLOSE);
   }
   
   // Variables for shot timing

@@ -1,13 +1,17 @@
 class Meteor {
   PVector position;
   PVector velocity;
-  float size;
+  int size; // 1=small, 2=medium, 3=large
   float rotation;
   float rotationSpeed;
-  boolean isDestroyed;
+  color meteorColor;
+  float[] vertexDistances; // For procedural shape
   
   // Constructor
-  Meteor(float x, float y, float meteorSize){};
+  Meteor(float x, float y, int meteorSize);
+  
+  // Generate the meteor's procedural shape
+  void generateShape();
   
   // Update meteor position
   void update();
@@ -18,12 +22,18 @@ class Meteor {
   // Check if meteor collides with planet
   boolean collidesWithPlanet();
   
-  // Check if meteor collides with player
-  boolean collidesWithPlayer();
-  
   // Check if meteor is hit by projectile
   boolean isHitByProjectile(Projectile p);
   
+  // Get meteor radius for collision detection
+  float getRadius();
+  
   // Check if meteor is off screen
   boolean isOffscreen();
+  
+  // Get damage this meteor does to planet
+  int getDamage();
+  
+  // Get meteor size for scoring
+  int getSize();
 }
