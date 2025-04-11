@@ -10,7 +10,7 @@ class Player {
     center = new PVector(centerX, centerY);
     orbitRadius = radius;
     angle = 0;
-    orbitSpeed = 0.05;
+    orbitSpeed = 0.035;
     
     // Calculate initial position
     updatePosition();
@@ -123,5 +123,5 @@ class Player {
   
   // Variables for shot timing
   private long lastShotTime = 0;
-  private int shotCooldown = 300; // milliseconds between shots
+  private int shotCooldown = 200; // milliseconds between shots
 }
