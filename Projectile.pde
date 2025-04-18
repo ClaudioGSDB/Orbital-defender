@@ -4,39 +4,31 @@ class Projectile {
   float rotation;
   float tailLength = 30; // Length of the projectile trail
   
-  // Constructor
   Projectile(float x, float y, float vx, float vy) {
     position = new PVector(x, y);
     velocity = new PVector(vx, vy);
     
-    // Calculate rotation based on velocity direction
     rotation = atan2(vy, vx);
   }
   
-  // Update projectile position
   void update() {
     position.add(velocity);
   }
   
-  // Display projectile
   void display() {
     pushMatrix();
     translate(position.x, position.y);
     rotate(rotation);
     
-    // Draw projectile using the image
     imageMode(CENTER);
     image(projectileImage, 0, 0);
     
-    // Draw trail effect
     drawTrail();
     
     popMatrix();
   }
   
-  // Draw a glowing trail behind the projectile
   void drawTrail() {
-    // Glow trail
     noStroke();
     
     // Outer trail (blue-white gradient)
@@ -66,7 +58,6 @@ class Projectile {
     endShape();
   }
   
-  // Check if projectile is off screen
   boolean isOffscreen() {
     return (position.x < 0 || 
             position.x > width || 

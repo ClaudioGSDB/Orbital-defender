@@ -13,6 +13,7 @@ int currentDifficulty = DIFFICULTY_EASY;
 Player player;
 ArrayList<Meteor> meteors;
 ArrayList<Projectile> projectiles;
+ArrayList<Explosion> explosions;
 
 int score = 0;
 int highScore = 0;
@@ -40,16 +41,20 @@ void setup() {
   projectileImage = loadImage("data/images/projectile.png");
   backgroundImage = loadImage("data/images/background.png");
 
-  /* Uncomment if you have sound files
-   backgroundMusic = new SoundFile(this, "data/sounds/background_music.mp3");
-   laserSound = new SoundFile(this, "data/sounds/laser_shot.mp3");
-   explosionSound = new SoundFile(this, "data/sounds/explosion.mp3");
-   buttonSound = new SoundFile(this, "data/sounds/button_click.mp3");
-   */
+  // Initialize sound files
+  try {
+    backgroundMusic = new SoundFile(this, "data/sounds/background_music.mp3");
+    laserSound = new SoundFile(this, "data/sounds/laser_shot.mp3");
+    explosionSound = new SoundFile(this, "data/sounds/explosion.mp3");
+    buttonSound = new SoundFile(this, "data/sounds/button_click.mp3");
+  } catch (Exception e) {
+    println("Warning: Some sound files couldn't be loaded: " + e.getMessage());
+  }
 
   planetCenter = new PVector(width/2, height/2);
   meteors = new ArrayList<Meteor>();
   projectiles = new ArrayList<Projectile>();
+  explosions = new ArrayList<Explosion>();
 
   initializeMenu();
 }
@@ -108,14 +113,15 @@ void initializeGame(int difficulty) {
 
   meteors.clear();
   projectiles.clear();
+  explosions.clear();
 
   player = new Player(width/2, height/2, 120);
 
-  /* Uncomment if you have sound files
-   if (backgroundMusic != null) {
-   backgroundMusic.loop();
-   }
-   */
+  // Start background music
+  if (backgroundMusic != null) {
+    backgroundMusic.stop(); // Stop any currently playing music
+    backgroundMusic.loop();
+  }
 }
 
 void updateGame() {
@@ -141,22 +147,39 @@ void updateGame() {
 
     if (meteor.collidesWithPlanet()) {
       planetHealth -= meteor.getDamage();
-
-      /* Uncomment if you have sound files
-       if (explosionSound != null) {
-       explosionSound.play();
-       }
-       */
-
+      
+      // Create explosion at impact point
+      PVector direction = PVector.sub(meteor.position, planetCenter);
+      direction.normalize();
+      PVector impactPoint = PVector.add(
+        planetCenter,
+        PVector.mult(direction, planetRadius)
+      );
+      
+      explosions.add(new Explosion(
+        impactPoint.x, 
+        impactPoint.y, 
+        meteor.getRadius() * 1.2
+      ));
+      
+      // Play sound
+      if (explosionSound != null) {
+        explosionSound.play(0.7, 1.0); // Lower volume for planet hits
+      }
+      
       meteors.remove(i);
-
+      
       if (planetHealth <= 0) {
         gameState = STATE_GAME_OVER;
         if (score > highScore) {
           highScore = score;
         }
+        // Stop music on game over
+        if (backgroundMusic != null) {
+          backgroundMusic.stop();
+        }
       }
-
+      
       continue;
     }
 
@@ -164,17 +187,33 @@ void updateGame() {
       Projectile projectile = projectiles.get(j);
       if (meteor.isHitByProjectile(projectile)) {
         score += 10 * meteor.getSize();
-
-        /* Uncomment if you have sound files
-         if (explosionSound != null) {
-         explosionSound.play();
-         }
-         */
-
+        
+        // Create explosion
+        explosions.add(new Explosion(
+          meteor.position.x, 
+          meteor.position.y, 
+          meteor.getRadius() * 1.5
+        ));
+        
+        // Play sound
+        if (explosionSound != null) {
+          explosionSound.play();
+        }
+        
         projectiles.remove(j);
         meteors.remove(i);
         break;
       }
+    }
+  }
+  
+  // Update explosions
+  for (int i = explosions.size() - 1; i >= 0; i--) {
+    Explosion explosion = explosions.get(i);
+    explosion.update();
+    
+    if (explosion.isDead()) {
+      explosions.remove(i);
     }
   }
 
@@ -219,10 +258,13 @@ void displayGame() {
     image(planetImageHard, planetCenter.x, planetCenter.y);
   }
 
-
-
   for (Meteor meteor : meteors) {
     meteor.display();
+  }
+  
+  // Draw explosions
+  for (Explosion explosion : explosions) {
+    explosion.display();
   }
 
   for (Projectile projectile : projectiles) {
@@ -311,11 +353,11 @@ void mousePressed() {
       for (Button button : menuButtons) {
         if (button.isMouseOver()) {
           button.click();
-          /* Uncomment if you have sound files
-           if (buttonSound != null) {
-           buttonSound.play();
-           }
-           */
+          
+          // Play button sound
+          if (buttonSound != null) {
+            buttonSound.play();
+          }
         }
       }
     }
