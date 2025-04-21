@@ -37,7 +37,7 @@ void setup() {
 
   planetImage = loadImage("data/images/planet.png");
   planetImageHard = loadImage("data/images/planet-hard.png");
-  shipImage = loadImage("data/images/ship.png");
+  shipImage = loadImage("data/images/Ship.png");
   projectileImage = loadImage("data/images/projectile.png");
   backgroundImage = loadImage("data/images/background.png");
 
